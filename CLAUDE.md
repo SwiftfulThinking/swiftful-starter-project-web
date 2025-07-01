@@ -73,12 +73,37 @@ To modify or add themes:
 3. Ensure both light and dark variants are defined
 4. Theme changes apply instantly to all components
 
-## Firebase Integration Notes
+## Firebase Integration
 
-This starter is prepared for Firebase integration:
-- Direct client-side Firebase SDK usage (no API routes)
-- Manager pattern for data operations
-- Firebase config should be added to environment variables
+### Setup
+1. Copy `.env.local.example` to `.env.local`
+2. Add your Firebase project configuration values
+3. The Firebase SDK is already installed and configured
+
+### Architecture
+- **Manager Pattern**: All Firebase operations go through managers in `/src/lib/managers/`
+- **Models**: Data models with required `id` field in `/src/lib/models/`
+- **Auth Context**: Authentication state managed via `AuthProvider` in `/src/contexts/auth-context.tsx`
+
+### Available Managers
+- `BaseManager`: Abstract base class for all managers
+- `UserManager`: User CRUD operations
+- `AuthManager`: Authentication operations (signup, signin, Google auth)
+
+### Usage Example
+```typescript
+// In a component
+import { useAuth } from '@/contexts/auth-context'
+
+function MyComponent() {
+  const { user, signIn, signOut } = useAuth()
+  // Use auth methods
+}
+
+// Direct manager usage
+import { userManager } from '@/lib/managers/user-manager'
+const user = await userManager.getById(userId)
+```
 
 ## Important Conventions
 

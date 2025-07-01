@@ -52,7 +52,7 @@ import { toast } from "sonner"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
-import { AlertCircle, ChevronDown, Home, Calendar as CalendarIcon, Bold, Italic, Underline, Package, Settings, LogOut } from "lucide-react"
+import { AlertCircle, ChevronDown, Home, Calendar as CalendarIcon, Bold, Italic, Underline, Package, Settings, LogOut, User } from "lucide-react"
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts"
 import { ThemeSwitcher } from "@/components/theme-switcher"
 import { useAuth } from "@/contexts/auth-context"
@@ -213,6 +213,14 @@ export default function ComponentsPage() {
                       <Link href="/components">
                         <Package className="mr-2 h-4 w-4" />
                         Components
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton asChild>
+                      <Link href="/profile">
+                        <User className="mr-2 h-4 w-4" />
+                        Profile
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>

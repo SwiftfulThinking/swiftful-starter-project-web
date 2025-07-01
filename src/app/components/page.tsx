@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import Link from "next/link"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
@@ -36,7 +37,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Separator } from "@/components/ui/separator"
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
-import { Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
+import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Slider } from "@/components/ui/slider"
 import { Switch } from "@/components/ui/switch"
@@ -51,9 +52,11 @@ import { toast } from "sonner"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
-import { AlertCircle, ChevronDown, Home, Calendar as CalendarIcon, Bold, Italic, Underline } from "lucide-react"
+import { AlertCircle, ChevronDown, Home, Calendar as CalendarIcon, Bold, Italic, Underline, Package, Settings, LogOut } from "lucide-react"
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts"
 import { ThemeSwitcher } from "@/components/theme-switcher"
+import { useAuth } from "@/contexts/auth-context"
+import { useRouter } from "next/navigation"
 
 const formSchema = z.object({
   username: z.string().min(2, {
@@ -127,6 +130,8 @@ const components = [
 ]
 
 export default function ComponentsPage() {
+  const { user, signOut } = useAuth()
+  const router = useRouter()
   const [date, setDate] = useState<Date | undefined>(new Date())
   const [progress, setProgress] = useState(45)
   const [sliderValue, setSliderValue] = useState([50])
@@ -139,6 +144,16 @@ export default function ComponentsPage() {
       username: "",
     },
   })
+
+  const handleSignOut = async () => {
+    try {
+      await signOut()
+      toast.success("Successfully signed out!")
+      router.push('/')
+    } catch (error: any) {
+      toast.error(error.message || "Failed to sign out")
+    }
+  }
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values)
@@ -177,31 +192,67 @@ export default function ComponentsPage() {
       <div className="min-h-screen flex w-full">
         {/* Global Sidebar */}
         <Sidebar>
+          <SidebarHeader className="border-b px-6 py-4">
+            <h2 className="text-lg font-semibold">Navigation</h2>
+          </SidebarHeader>
           <SidebarContent>
             <SidebarGroup>
-              <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+              <SidebarGroupLabel>Menu</SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild>
-                      <a href="/">
+                      <Link href="/home">
                         <Home className="mr-2 h-4 w-4" />
-                        <span>Home</span>
-                      </a>
+                        Home
+                      </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
-                      <a href="/components">
-                        <CalendarIcon className="mr-2 h-4 w-4" />
-                        <span>Components</span>
-                      </a>
+                    <SidebarMenuButton asChild isActive>
+                      <Link href="/components">
+                        <Package className="mr-2 h-4 w-4" />
+                        Components
+                      </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 </SidebarMenu>
               </SidebarGroupContent>
             </SidebarGroup>
           </SidebarContent>
+          <SidebarFooter className="border-t">
+            <div className="p-2">
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="ghost" className="w-full justify-start gap-2 p-2 h-auto">
+                    <Avatar className="h-8 w-8 shrink-0">
+                      <AvatarImage src={user?.photoURL || undefined} alt={user?.displayName || user?.email || 'User'} />
+                      <AvatarFallback>
+                        {user?.displayName?.charAt(0) || user?.email?.charAt(0) || 'U'}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex flex-col items-start text-left text-sm min-w-0 flex-1">
+                      <span className="font-medium truncate w-full text-left">{user?.displayName || 'User'}</span>
+                      <span className="text-xs text-muted-foreground truncate w-full text-left">{user?.email}</span>
+                    </div>
+                    <Settings className="h-4 w-4 shrink-0" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-56" align="end" side="right">
+                  <div className="grid gap-2">
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-start"
+                      onClick={handleSignOut}
+                    >
+                      <LogOut className="mr-2 h-4 w-4" />
+                      Sign Out
+                    </Button>
+                  </div>
+                </PopoverContent>
+              </Popover>
+            </div>
+          </SidebarFooter>
         </Sidebar>
 
         {/* Page Content */}

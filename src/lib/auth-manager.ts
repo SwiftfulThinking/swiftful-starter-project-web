@@ -10,7 +10,7 @@ import {
   AuthError
 } from 'firebase/auth'
 import { auth, db } from '@/lib/firebase'
-import { doc, deleteDoc } from 'firebase/firestore'
+import { doc, deleteDoc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore'
 
 export interface AuthUser {
   uid: string
@@ -50,15 +50,22 @@ class AuthManager {
    */
   async signInWithGoogle(): Promise<AuthUser> {
     try {
+      let firebaseUser: FirebaseUser
+      
       // If user is anonymous, try to link accounts
       if (auth.currentUser?.isAnonymous) {
         const result = await linkWithPopup(auth.currentUser, this.googleProvider)
-        return this.mapFirebaseUser(result.user)
+        firebaseUser = result.user
+      } else {
+        // Otherwise, sign in normally
+        const result = await signInWithPopup(auth, this.googleProvider)
+        firebaseUser = result.user
       }
       
-      // Otherwise, sign in normally
-      const result = await signInWithPopup(auth, this.googleProvider)
-      return this.mapFirebaseUser(result.user)
+      // Check if this is a new user (first time sign in)
+      await this.createUserProfileIfNeeded(firebaseUser)
+      
+      return this.mapFirebaseUser(firebaseUser)
     } catch (error) {
       throw this.handleAuthError(error as AuthError)
     }
@@ -123,6 +130,29 @@ class AuthManager {
     // Return unsubscribe function
     return () => {
       this.authStateListeners = this.authStateListeners.filter(listener => listener !== callback)
+    }
+  }
+
+  /**
+   * Create user profile in Firestore if it doesn't exist
+   */
+  private async createUserProfileIfNeeded(firebaseUser: FirebaseUser): Promise<void> {
+    const userRef = doc(db, 'users', firebaseUser.uid)
+    const userSnap = await getDoc(userRef)
+    
+    // If user doesn't exist in Firestore, create their profile
+    if (!userSnap.exists()) {
+      const userData = {
+        email: firebaseUser.email || '',
+        displayName: firebaseUser.displayName || null,
+        photoURL: firebaseUser.photoURL || null,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+        role: 'user',
+        isActive: true
+      }
+      
+      await setDoc(userRef, userData)
     }
   }
 

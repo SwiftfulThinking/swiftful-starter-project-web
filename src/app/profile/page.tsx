@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/sidebar"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { Home, Package, Settings, LogOut, User } from "lucide-react"
+import { Home, Package, Settings, LogOut, User, Bot } from "lucide-react"
 import { doc, getDoc } from "firebase/firestore"
 import { db } from "@/lib/firebase"
 
@@ -152,6 +152,14 @@ export default function ProfilePage() {
                       <Link href="/profile">
                         <User className="mr-2 h-4 w-4" />
                         Profile
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton asChild>
+                      <Link href="/openai">
+                        <Bot className="mr-2 h-4 w-4" />
+                        OpenAI
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>

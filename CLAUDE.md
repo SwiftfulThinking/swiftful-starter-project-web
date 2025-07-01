@@ -119,6 +119,40 @@ import { authManager } from '@/lib/auth-manager'
 const user = authManager.getCurrentUser()
 ```
 
+### OpenAI Integration
+- **openai-manager.ts**: Handles OpenAI API interactions using raw JSON requests
+- **Features**:
+  - Send prompts and receive text responses
+  - Customize model, temperature, and other parameters
+  - Add system messages and conversation history
+  - Build properly formatted messages
+
+### OpenAI Usage Example
+```typescript
+import { openAIManager } from '@/lib/openai-manager'
+
+// Simple prompt
+const response = await openAIManager.prompt("What is the capital of France?")
+
+// With system message
+const response = await openAIManager.prompt("Explain quantum computing", {
+  systemMessage: "You are a physics professor explaining to a 10-year-old",
+  temperature: 0.7
+})
+
+// With conversation history
+const previousMessages = [
+  openAIManager.buildMessage('user', 'What is React?'),
+  openAIManager.buildMessage('assistant', 'React is a JavaScript library for building user interfaces.'),
+]
+
+const response = await openAIManager.prompt("Tell me more about hooks", {
+  previousMessages,
+  model: 'gpt-4.1',
+  maxOutputTokens: 1000
+})
+```
+
 ## Important Conventions
 
 1. **Client-Side Data Fetching**: Use Firebase client SDK directly rather than API routes

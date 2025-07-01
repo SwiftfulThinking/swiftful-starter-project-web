@@ -3,9 +3,11 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Textarea } from "@/components/ui/textarea"
+import { Label } from "@/components/ui/label"
 import { useAuth } from "@/contexts/auth-context"
 import { useRouter } from "next/navigation"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { toast } from "sonner"
 import {
   Sidebar,
@@ -23,11 +25,18 @@ import {
 } from "@/components/ui/sidebar"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { Home, Package, Settings, LogOut, User, Bot } from "lucide-react"
+import { Home, Package, Settings, LogOut, User, Bot, Loader2 } from "lucide-react"
+import { openAIManager } from "@/lib/openai-manager"
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { Separator } from "@/components/ui/separator"
 
-export default function HomePage() {
+export default function OpenAIPage() {
   const { user, loading, signOut } = useAuth()
   const router = useRouter()
+  const [prompt, setPrompt] = useState("")
+  const [response, setResponse] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState("")
 
   useEffect(() => {
     // Redirect to landing page if not authenticated
@@ -43,6 +52,43 @@ export default function HomePage() {
       router.push('/')
     } catch (error: any) {
       toast.error(error.message || "Failed to sign out")
+    }
+  }
+
+  const handleSubmit = async () => {
+    if (!prompt.trim()) {
+      toast.error("Please enter a prompt")
+      return
+    }
+
+    if (!openAIManager.isConfigured()) {
+      setError("OpenAI API key not configured. Please add NEXT_PUBLIC_OPENAI_API_KEY to your environment variables.")
+      return
+    }
+
+    setIsLoading(true)
+    setError("")
+    setResponse("")
+
+    try {
+      const result = await openAIManager.prompt(prompt, {
+        temperature: 0.7,
+        maxOutputTokens: 2048
+      })
+      setResponse(result)
+    } catch (error: any) {
+      console.error("OpenAI error:", error)
+      setError(error.message || "Failed to get response from OpenAI")
+      toast.error("Failed to get AI response")
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && e.metaKey) {
+      e.preventDefault()
+      handleSubmit()
     }
   }
 
@@ -72,7 +118,7 @@ export default function HomePage() {
               <SidebarGroupContent>
                 <SidebarMenu>
                   <SidebarMenuItem>
-                    <SidebarMenuButton asChild isActive>
+                    <SidebarMenuButton asChild>
                       <Link href="/home">
                         <Home className="mr-2 h-4 w-4" />
                         Home
@@ -96,7 +142,7 @@ export default function HomePage() {
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                    <SidebarMenuButton asChild>
+                    <SidebarMenuButton asChild isActive>
                       <Link href="/openai">
                         <Bot className="mr-2 h-4 w-4" />
                         OpenAI
@@ -152,53 +198,79 @@ export default function HomePage() {
           <main className="flex-1 p-8">
             <div className="max-w-4xl mx-auto space-y-8">
               <div>
-                <h1 className="text-4xl font-bold">Welcome to Your Dashboard</h1>
+                <h1 className="text-4xl font-bold">OpenAI Playground</h1>
+                <p className="text-muted-foreground mt-2">Chat with AI using OpenAI's API</p>
               </div>
 
-              <Card>
-                <CardHeader>
-                  <CardTitle>Profile Information</CardTitle>
-                  <CardDescription>Your account details</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-2">
-                  <div>
-                    <span className="font-medium">Email:</span> {user.email || "Not provided"}
-                  </div>
-                  <div>
-                    <span className="font-medium">Name:</span> {user.displayName || "Not provided"}
-                  </div>
-                  <div>
-                    <span className="font-medium">Account Type:</span> {user.isAnonymous ? "Anonymous" : "Google"}
-                  </div>
-                </CardContent>
-              </Card>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid gap-6">
+                {/* Prompt Section */}
                 <Card>
                   <CardHeader>
-                    <CardTitle>Quick Actions</CardTitle>
+                    <CardTitle>Send a Prompt</CardTitle>
+                    <CardDescription>
+                      Enter your message below and press Submit or Cmd+Enter
+                    </CardDescription>
                   </CardHeader>
-                  <CardContent className="space-y-2">
+                  <CardContent className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="prompt">Your Prompt</Label>
+                      <Textarea
+                        id="prompt"
+                        placeholder="Ask me anything..."
+                        value={prompt}
+                        onChange={(e) => setPrompt(e.target.value)}
+                        onKeyDown={handleKeyDown}
+                        className="min-h-[100px]"
+                        disabled={isLoading}
+                      />
+                    </div>
                     <Button 
-                      className="w-full" 
-                      variant="secondary"
-                      onClick={() => router.push('/components')}
+                      onClick={handleSubmit} 
+                      disabled={isLoading || !prompt.trim()}
+                      className="w-full"
                     >
-                      View Components
+                      {isLoading ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Generating Response...
+                        </>
+                      ) : (
+                        <>
+                          <Bot className="mr-2 h-4 w-4" />
+                          Submit Prompt
+                        </>
+                      )}
                     </Button>
                   </CardContent>
                 </Card>
 
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Resources</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-2">
-                    <p className="text-sm text-muted-foreground">
-                      This is your authenticated home page. Add your app content here.
-                    </p>
-                  </CardContent>
-                </Card>
+                {/* Response Section */}
+                {(response || error || isLoading) && (
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>AI Response</CardTitle>
+                      <CardDescription>
+                        {isLoading ? "Waiting for response..." : "Generated by OpenAI"}
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      {error ? (
+                        <div className="text-destructive p-4 bg-destructive/10 rounded-md">
+                          <p className="font-medium">Error:</p>
+                          <p className="text-sm mt-1">{error}</p>
+                        </div>
+                      ) : isLoading ? (
+                        <div className="flex items-center justify-center py-8">
+                          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                        </div>
+                      ) : (
+                        <ScrollArea className="h-[400px] w-full rounded-md border p-4">
+                          <div className="whitespace-pre-wrap text-sm">{response}</div>
+                        </ScrollArea>
+                      )}
+                    </CardContent>
+                  </Card>
+                )}
               </div>
             </div>
           </main>

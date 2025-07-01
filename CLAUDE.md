@@ -85,10 +85,14 @@ To modify or add themes:
 - **Models**: Data models with required `id` field in `/src/lib/models/`
 - **Auth Context**: Authentication state managed via `AuthProvider` in `/src/contexts/auth-context.tsx`
 
-### Available Managers
-- `BaseManager`: Abstract base class for all managers
-- `UserManager`: User CRUD operations
-- `AuthManager`: Authentication operations (signup, signin, Google auth)
+### Authentication System
+- **auth-manager.ts**: View-agnostic authentication manager handling all Firebase auth logic
+- **AuthContext**: React context providing auth state and methods to components
+- **Supported Auth Methods**:
+  - Google SSO (with anonymous account linking)
+  - Anonymous authentication
+  - Sign out
+  - Delete account
 
 ### Usage Example
 ```typescript
@@ -96,13 +100,23 @@ To modify or add themes:
 import { useAuth } from '@/contexts/auth-context'
 
 function MyComponent() {
-  const { user, signIn, signOut } = useAuth()
-  // Use auth methods
+  const { user, signInWithGoogle, signInAnonymously, signOut, deleteAccount } = useAuth()
+  
+  // Check auth state
+  if (user?.isAnonymous) {
+    // User is signed in anonymously
+  }
+  
+  // Auth methods
+  await signInWithGoogle() // Sign in with Google
+  await signInAnonymously() // Sign in anonymously
+  await signOut() // Sign out
+  await deleteAccount() // Delete account and data
 }
 
-// Direct manager usage
-import { userManager } from '@/lib/managers/user-manager'
-const user = await userManager.getById(userId)
+// Direct auth-manager usage (not recommended in components)
+import { authManager } from '@/lib/auth-manager'
+const user = authManager.getCurrentUser()
 ```
 
 ## Important Conventions

@@ -1,23 +1,21 @@
 'use client'
 
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react'
-import { User } from '@/lib/models/user'
-import { authManager } from '@/lib/managers/auth-manager'
+import { authManager, AuthUser } from '@/lib/auth-manager'
 
 interface AuthContextType {
-  user: User | null
+  user: AuthUser | null
   loading: boolean
-  signUp: (email: string, password: string, displayName?: string) => Promise<User>
-  signIn: (email: string, password: string) => Promise<User>
-  signInWithGoogle: () => Promise<User>
+  signInWithGoogle: () => Promise<AuthUser>
+  signInAnonymously: () => Promise<AuthUser>
   signOut: () => Promise<void>
-  sendPasswordReset: (email: string) => Promise<void>
+  deleteAccount: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null)
+  const [user, setUser] = useState<AuthUser | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -32,11 +30,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const value: AuthContextType = {
     user,
     loading,
-    signUp: authManager.signUp.bind(authManager),
-    signIn: authManager.signIn.bind(authManager),
     signInWithGoogle: authManager.signInWithGoogle.bind(authManager),
+    signInAnonymously: authManager.signInAnonymously.bind(authManager),
     signOut: authManager.signOut.bind(authManager),
-    sendPasswordReset: authManager.sendPasswordReset.bind(authManager),
+    deleteAccount: authManager.deleteAccount.bind(authManager),
   }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

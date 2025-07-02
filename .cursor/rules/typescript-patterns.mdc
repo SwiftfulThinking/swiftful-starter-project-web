@@ -1,0 +1,54 @@
+---
+globs: ["**/*.ts", "**/*.tsx"]
+---
+
+# TypeScript Patterns
+
+## Data Fetching & Type Safety
+- No Server Fetching: All data fetched client-side
+- Always Convert Firestore Data: Never use raw DocumentData, always convert to typed models
+
+### Wrong Approach
+```typescript
+// ❌ Wrong - using raw Firestore data
+const userSnap = await getDoc(userRef)
+const data = userSnap.data() // This is untyped!
+```
+
+### Correct Approach
+```typescript
+// ✅ Correct - convert to typed model
+const userSnap = await getDoc(userRef)
+if (userSnap.exists()) {
+  const user: User = {
+    id: userSnap.id,
+    email: userSnap.data().email || '',
+    displayName: userSnap.data().displayName || null,
+    // ... map all fields with proper types and defaults
+  }
+}
+```
+
+## Manager Usage
+- Use Managers When Available: Prefer manager classes over direct Firestore queries
+```typescript
+// ✅ Preferred - managers handle conversion
+const user = await userManager.getById(userId)
+
+// ⚠️ Avoid - direct query requires manual conversion
+const userDoc = await getDoc(doc(db, 'users', userId))
+```
+
+## Loading Pattern
+```typescript
+const [loading, setLoading] = useState(true)
+const [error, setError] = useState("")
+const [data, setData] = useState<User | null>(null) // Typed state!
+
+useEffect(() => {
+  fetchData()
+    .then(setData)
+    .catch(setError)
+    .finally(() => setLoading(false))
+}, [])
+```

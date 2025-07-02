@@ -1,0 +1,56 @@
+---
+globs: ["**/openai-manager.ts", "**/openai/**/*.tsx"]
+---
+
+# OpenAI Integration
+
+## Overview
+- openai-manager.ts: Handles OpenAI API interactions using raw JSON requests (no SDK)
+- Two Different APIs:
+  - Chat Completions API (/chat/completions): For GPT-3.5, GPT-4 models
+  - Reasoning API (/responses): For O1, O3 reasoning models
+- Automatic Routing: The prompt() method automatically routes to the correct API based on model
+
+## Available Models
+```typescript
+// Chat models (use /chat/completions endpoint)
+- gpt-3.5-turbo
+- gpt-4
+- gpt-4-turbo
+
+// Reasoning models (use /responses endpoint)
+- o1-preview
+- o1-mini
+- o3
+- o3-mini
+```
+
+## API Differences
+1. Chat Completions API:
+   - Standard OpenAI format
+   - Simple message array with role/content
+   - Synchronous responses
+
+2. Reasoning API:
+   - Different request structure with input array
+   - Supports developer role (converted from system)
+   - Includes reasoning configuration (effort, summary)
+   - Requires organization verification for summaries
+   - Response in output array format
+
+## Usage Examples
+```typescript
+import { openAIManager } from '@/lib/openai-manager'
+
+// Automatically uses Chat API
+const response = await openAIManager.prompt("What is the capital of France?", {
+  model: 'gpt-3.5-turbo'
+})
+
+// Automatically uses Reasoning API
+const response = await openAIManager.prompt("Solve this complex problem", {
+  model: 'o3',
+  reasoningEffort: 'high',
+  reasoningSummary: 'auto'
+})
+```

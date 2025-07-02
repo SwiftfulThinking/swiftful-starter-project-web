@@ -1,0 +1,54 @@
+---
+globs: ["**/storage-manager.ts", "**/upload/**/*.tsx", "**/profile/**/*.tsx"]
+---
+
+# Firebase Storage Patterns
+
+## Overview
+- storage-manager.ts: Handles all Firebase Storage operations
+- Singleton Pattern: Export instance, not class
+- Error Handling: User-friendly error messages
+- File Organization: Generate unique paths with timestamps
+
+## Available Methods
+```typescript
+import { storageManager } from '@/lib/storage-manager'
+
+// Upload a single file
+const file = event.target.files[0] // From file input
+const url = await storageManager.uploadFile('uploads/images/profile.jpg', file)
+
+// Upload with unique path generation
+const uniquePath = storageManager.generateUniquePath('uploads/images', file.name)
+const url = await storageManager.uploadFile(uniquePath, file)
+
+// Upload multiple files
+const files = Array.from(event.target.files) // From multi-file input
+const urls = await storageManager.uploadMultipleFiles('uploads/documents', files)
+
+// Get download URL for existing file
+const url = await storageManager.getFileUrl('uploads/images/profile.jpg')
+
+// Delete a file
+await storageManager.deleteFile('uploads/images/old-profile.jpg')
+
+// List all files in a directory
+const filePaths = await storageManager.listFiles('uploads/images')
+```
+
+## Usage Examples
+```typescript
+// Profile picture upload
+const handleProfilePicture = async (file: File) => {
+  try {
+    const path = storageManager.generateUniquePath(`users/${user.uid}/profile`, file.name)
+    const downloadUrl = await storageManager.uploadFile(path, file)
+    
+    // Update user profile with new photo URL
+    await userManager.update(user.uid, { photoURL: downloadUrl })
+    toast.success('Profile picture updated')
+  } catch (error) {
+    toast.error('Failed to upload profile picture')
+  }
+}
+```

@@ -1,0 +1,41 @@
+---
+alwaysApply: true
+---
+
+# Coding Conventions
+
+## File & Code Organization
+- File Naming: Use kebab-case for all files (e.g., auth-manager.ts, theme-switcher.tsx)
+- Imports: Always use @/ path alias, group imports by type
+- Icons: Use only lucide-react icons for consistency
+- Components: Export named exports, not default exports
+
+## Styling Guidelines
+- Tailwind Only: No CSS modules or styled-components
+- Conditional Classes: Use cn() helper from @/lib/utils
+- Theme Colors: Always use CSS variables (e.g., bg-primary, not hardcoded colors)
+- Spacing: Follow Tailwind's default spacing scale
+
+## Component Patterns
+- Radix UI: All UI components built on Radix primitives
+- Compound Components: Use component composition (Card, CardHeader, etc.)
+- Ref Forwarding: Always use forwardRef for custom components
+- Class Names: All components must accept className prop
+
+## UI/UX Patterns
+- Error Handling: Always show toast notifications with user-friendly messages
+  ```typescript
+  try {
+    // operation
+  } catch (error: any) {
+    toast.error(error.message || "Fallback message")
+  }
+  ```
+- Loading States: Use "Loading..." text or <Loader2 className="animate-spin" />
+- Form Submission: Support Cmd+Enter keyboard shortcut
+- Protected Routes: Check auth in useEffect and redirect to / if not authenticated
+
+## Environment Variables
+- Client-Side Only: All env vars must start with NEXT_PUBLIC_
+- Required: Firebase config (7 vars) and OpenAI API key
+- Example File: .env.local.example must be kept updated

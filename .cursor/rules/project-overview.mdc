@@ -1,0 +1,33 @@
+---
+alwaysApply: true
+---
+
+# Project Overview
+
+This is a Next.js 15.3.4 starter template with comprehensive shadcn/ui components and advanced theming.
+
+## Tech Stack
+- Framework: Next.js 15.3.4 with App Router
+- Language: TypeScript 5.x with strict mode  
+- Styling: Tailwind CSS 3.4.1
+- UI Components: shadcn/ui (all 46 components pre-installed)
+- Animations: Lottie animations via lottie-react
+- Video Player: react-player for YouTube, Vimeo, and direct video URLs
+- Authentication: Firebase Auth with Firestore user profiles
+- Database: Firebase Firestore
+- AI Integration: OpenAI API (Chat & Reasoning models)
+- State Management: React Context (auth only) + local state
+- Forms: React Hook Form + Zod validation
+- Themes: next-themes + custom theme system
+
+## Core Principles
+1. Client-Side First: All pages use 'use client' directive - no server components
+2. No API Routes: All data operations use Firebase client SDK directly  
+3. TypeScript Strict Mode: No explicit any types except in error catches
+4. Component Library: Use existing shadcn/ui components before creating custom ones
+
+## Project Structure
+- App Router: Uses Next.js 15 app directory structure
+- Component Library: All shadcn/ui components in /src/components/ui/
+- Theme System: Centralized color management in /src/lib/theme-colors.ts
+- TypeScript: Path alias @/* → ./src/*

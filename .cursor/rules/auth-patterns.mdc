@@ -1,0 +1,53 @@
+---
+globs: ["**/auth/**/*.tsx", "**/contexts/auth-context.tsx", "**/protected/**/*.tsx"]
+---
+
+# Authentication Patterns
+
+## Architecture Overview
+1. auth-manager.ts: Singleton class managing all Firebase Auth operations
+   - Handles authentication state and listeners
+   - Automatically creates user profiles in Firestore on first sign-in
+   - Provides simplified AuthUser interface (uid, email, displayName, photoURL, isAnonymous)
+   - Google provider configured with prompt: 'select_account'
+
+2. User Profile Storage:
+   - User profiles stored in Firestore users collection
+   - Document ID matches Firebase Auth UID
+   - Profile created automatically on first Google sign-in
+
+3. AuthContext: React context wrapping auth-manager
+   - Provides auth state and methods to components
+   - Handles loading states
+   - Auto-refreshes on auth state changes
+
+4. Protected Routes: Pages check auth state and redirect if needed
+   - /home, /components, /profile, /openai require authentication
+   - Redirect to landing page (/) if not authenticated
+
+## Supported Auth Methods
+- Google SSO: With email picker (always shows account selection)
+- Anonymous Sign In: For temporary access
+- Account Linking: Anonymous users can upgrade to Google account
+- Sign Out: Clears auth state
+- Delete Account: Removes Firestore data and auth account
+
+## Usage Examples
+```typescript
+// In a component
+import { useAuth } from '@/contexts/auth-context'
+
+function MyComponent() {
+  const { user, loading, signInWithGoogle, signInAnonymously, signOut, deleteAccount } = useAuth()
+  
+  if (loading) return <div>Loading...</div>
+  
+  if (!user) {
+    // User not authenticated
+    return <button onClick={signInWithGoogle}>Sign In</button>
+  }
+  
+  // Access user data
+  console.log(user.email, user.isAnonymous)
+}
+```

@@ -1,0 +1,30 @@
+---
+alwaysApply: true
+---
+
+# What NOT to Do
+
+## Avoid These Patterns
+1. No Server Components: Don't remove 'use client' directives
+2. No API Routes: Don't create /app/api routes - use Firebase directly
+3. No New Icon Libraries: Use lucide-react exclusively
+4. No CSS Files: Don't create .css or .module.css files
+5. No Default Exports: Use named exports for all components
+6. No Global State: Keep state local or use Context sparingly
+7. No Custom Fetch Wrappers: Use Firebase SDK methods directly
+8. No Env Vars Without Prefix: All must start with NEXT_PUBLIC_
+
+## Common Mistakes to Avoid
+- Don't forget to add new pages to the sidebar navigation
+- Don't hardcode colors - use theme CSS variables
+- Don't skip loading states - every async operation needs feedback
+- Don't use any type - define proper interfaces
+- Don't commit .env.local file
+- Don't forget isActive prop on sidebar menu items
+- Don't use regular <a> tags for internal navigation
+
+## Important Reminders
+- NEVER create files unless they're absolutely necessary
+- ALWAYS prefer editing an existing file to creating a new one
+- NEVER proactively create documentation files (*.md) or README files
+- Only create documentation files if explicitly requested

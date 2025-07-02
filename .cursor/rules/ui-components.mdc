@@ -1,0 +1,54 @@
+---
+globs: ["**/components/**/*.tsx", "**/app/**/*.tsx"]
+---
+
+# UI Components & Pages
+
+## Working with Components
+All shadcn/ui components follow consistent patterns:
+- Located in /src/components/ui/
+- Use Radix UI primitives for accessibility
+- Styled with Tailwind CSS classes
+- Support theme colors via CSS variables
+
+## Sidebar Navigation
+- Structure: Every authenticated page must include the sidebar
+- Active States: Set isActive prop on current page's menu item  
+- User Footer: Shows profile picture, name, email, and settings popover
+
+## Navigation Patterns
+- Programmatic: Use router.push() from next/navigation
+- Links in Sidebar: Use Next.js <Link> component
+- External Links: Add target="_blank" rel="noopener noreferrer"
+
+## Custom Components
+
+### ResponsiveLottie Component
+```tsx
+import { ResponsiveLottie } from "@/components/ui/responsive-lottie"
+
+// Loop animation
+<ResponsiveLottie 
+  url="https://example.com/animation.json" 
+  playbackMode="loop"
+  className="h-48" 
+/>
+```
+
+### ResponsivePlayer Component  
+```tsx
+import { ResponsivePlayer } from "@/components/ui/responsive-player"
+
+// YouTube video with controls
+<ResponsivePlayer 
+  url="https://www.youtube.com/watch?v=dQw4w9WgXcQ" 
+  controls={true}
+  className="h-64"
+/>
+```
+
+## Theme System
+- Central theme configuration in /src/lib/theme-colors.ts
+- 4 pre-built themes with light/dark variants
+- Uses HSL color format
+- Theme changes apply instantly to all components

@@ -1,0 +1,55 @@
+---
+globs: ["**/managers/*.ts", "**/auth-manager.ts", "**/storage-manager.ts", "**/firebase.ts"]
+---
+
+# Firebase Patterns
+
+## Architecture
+- Manager Pattern: All Firebase operations go through managers in /src/lib/managers/
+- Models: Data models with required id field in /src/lib/models/
+- Auth Context: Authentication state managed via AuthProvider in /src/contexts/auth-context.tsx
+- Storage: File uploads handled by storage-manager in /src/lib/storage-manager.ts
+
+## Manager Pattern Rules
+- Singleton: Export instance, not class (e.g., export const authManager = new AuthManager())
+- Type Conversion: All managers must implement toModel() and toFirestore() methods
+- Never Return Raw Data: Always return typed model interfaces, never DocumentData
+- Error Handling: Console.error for debugging, throw user-friendly errors
+- Firestore: Document ID must match the model's id field
+- Default Values: Handle null/undefined fields in toModel() with appropriate defaults
+
+## Authentication Flow
+- Page Protection Pattern:
+```typescript
+useEffect(() => {
+  if (!loading && !user) {
+    router.push('/')
+  }
+}, [user, loading, router])
+```
+- Sign Out: Always redirect to landing page after sign out
+- User Profiles: Automatically created in Firestore on first sign-in
+
+## Data Models
+```typescript
+// AuthUser (from auth-manager)
+interface AuthUser {
+  uid: string
+  email: string | null
+  displayName: string | null
+  photoURL: string | null
+  isAnonymous: boolean
+}
+
+// User (Firestore document)
+interface User {
+  id: string
+  email: string
+  displayName: string | null
+  photoURL: string | null
+  createdAt: Date
+  updatedAt: Date
+  role: 'user' | 'admin'
+  isActive: boolean
+}
+```

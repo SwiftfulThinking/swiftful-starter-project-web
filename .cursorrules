@@ -1,0 +1,66 @@
+# Swiftful Starter Project Web - Cursor Rules
+
+This is a Next.js 15.3.4 starter template with comprehensive shadcn/ui components and advanced theming.
+
+## Tech Stack
+- Framework: Next.js 15.3.4 with App Router
+- Language: TypeScript 5.x with strict mode  
+- Styling: Tailwind CSS 3.4.1
+- UI Components: shadcn/ui (all 46 components pre-installed)
+- Animations: Lottie animations via lottie-react
+- Video Player: react-player
+- Authentication: Firebase Auth with Firestore user profiles
+- Database: Firebase Firestore
+- AI Integration: OpenAI API (Chat & Reasoning models)
+- State Management: React Context (auth only) + local state
+- Forms: React Hook Form + Zod validation
+- Themes: next-themes + custom theme system
+
+## Core Principles
+1. Client-Side First: All pages use 'use client' directive - no server components
+2. No API Routes: All data operations use Firebase client SDK directly  
+3. TypeScript Strict Mode: No explicit any types except in error catches
+4. Component Library: Use existing shadcn/ui components before creating custom ones
+
+## File & Code Organization
+- File Naming: Use kebab-case for all files (e.g., auth-manager.ts, theme-switcher.tsx)
+- Imports: Always use @/ path alias, group imports by type
+- Icons: Use only lucide-react icons for consistency
+- Components: Export named exports, not default exports
+
+## Styling Guidelines
+- Tailwind Only: No CSS modules or styled-components
+- Conditional Classes: Use cn() helper from @/lib/utils
+- Theme Colors: Always use CSS variables (e.g., bg-primary, not hardcoded colors)
+- Spacing: Follow Tailwind's default spacing scale
+
+## Firebase Patterns
+- Manager Pattern: All Firebase operations go through managers
+- Singleton: Export instance, not class (e.g., export const authManager = new AuthManager())
+- Type Conversion: Always convert Firestore data to typed models
+- Never Return Raw Data: Always return typed model interfaces, never DocumentData
+
+## What NOT to Do
+1. No Server Components: Don't remove 'use client' directives
+2. No API Routes: Don't create /app/api routes - use Firebase directly
+3. No New Icon Libraries: Use lucide-react exclusively
+4. No CSS Files: Don't create .css or .module.css files
+5. No Default Exports: Use named exports for all components
+6. No Global State: Keep state local or use Context sparingly
+7. No Custom Fetch Wrappers: Use Firebase SDK methods directly
+8. No Env Vars Without Prefix: All must start with NEXT_PUBLIC_
+
+## Common Mistakes to Avoid
+- Don't forget to add new pages to the sidebar navigation
+- Don't hardcode colors - use theme CSS variables
+- Don't skip loading states - every async operation needs feedback
+- Don't use any type - define proper interfaces
+- Don't commit .env.local file
+- Don't forget isActive prop on sidebar menu items
+- Don't use regular <a> tags for internal navigation
+
+## Important Reminders
+- NEVER create files unless they're absolutely necessary
+- ALWAYS prefer editing an existing file to creating a new one
+- NEVER proactively create documentation files (*.md) or README files
+- Only create documentation files if explicitly requested

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useAuth } from "@/contexts/auth-context"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
@@ -37,6 +38,7 @@ export default function OpenAIPage() {
   const [response, setResponse] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
+  const [selectedModel, setSelectedModel] = useState("gpt-3.5-turbo")
 
   useEffect(() => {
     // Redirect to landing page if not authenticated
@@ -72,8 +74,10 @@ export default function OpenAIPage() {
 
     try {
       const result = await openAIManager.prompt(prompt, {
+        model: selectedModel,
         temperature: 0.7,
-        maxOutputTokens: 2048
+        maxOutputTokens: 2048,
+        reasoningEffort: 'medium'
       })
       setResponse(result)
     } catch (error: any) {
@@ -212,6 +216,31 @@ export default function OpenAIPage() {
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
+                    <div className="grid gap-4 md:grid-cols-2">
+                      <div className="space-y-2">
+                        <Label htmlFor="model">Model</Label>
+                        <Select value={selectedModel} onValueChange={setSelectedModel}>
+                          <SelectTrigger id="model">
+                            <SelectValue placeholder="Select a model" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {openAIManager.availableModels.map((model) => (
+                              <SelectItem key={model.value} value={model.value}>
+                                {model.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="info">Model Info</Label>
+                        <div className="text-sm text-muted-foreground p-2 border rounded-md h-[40px] flex items-center">
+                          {selectedModel.includes('o1') || selectedModel.includes('o3') 
+                            ? 'Advanced reasoning model' 
+                            : 'Standard chat model'}
+                        </div>
+                      </div>
+                    </div>
                     <div className="space-y-2">
                       <Label htmlFor="prompt">Your Prompt</Label>
                       <Textarea

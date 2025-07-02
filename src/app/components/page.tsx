@@ -55,6 +55,8 @@ import * as z from "zod"
 import { AlertCircle, ChevronDown, Home, Calendar as CalendarIcon, Bold, Italic, Underline, Package, Settings, LogOut, User, Bot } from "lucide-react"
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts"
 import { ThemeSwitcher } from "@/components/theme-switcher"
+import { ResponsiveLottie } from "@/components/ui/responsive-lottie"
+import { ResponsivePlayer } from "@/components/ui/responsive-player"
 import { useAuth } from "@/contexts/auth-context"
 import { useRouter } from "next/navigation"
 
@@ -105,6 +107,7 @@ const components = [
   { id: "input", name: "Input" },
   { id: "input-otp", name: "Input OTP" },
   { id: "label", name: "Label" },
+  { id: "lottie", name: "Lottie Animation" },
   { id: "menubar", name: "Menubar" },
   { id: "navigation-menu", name: "Navigation Menu" },
   { id: "pagination", name: "Pagination" },
@@ -123,10 +126,11 @@ const components = [
   { id: "table", name: "Table" },
   { id: "tabs", name: "Tabs" },
   { id: "textarea", name: "Textarea" },
+  { id: "toast", name: "Toast" },
   { id: "toggle", name: "Toggle" },
   { id: "toggle-group", name: "Toggle Group" },
   { id: "tooltip", name: "Tooltip" },
-  { id: "toast", name: "Toast" },
+  { id: "video-player", name: "Video Player" },
 ]
 
 export default function ComponentsPage() {
@@ -1570,6 +1574,73 @@ export default function ComponentsPage() {
                   >
                     Show Toast
                   </Button>
+                </CardContent>
+              </Card>
+            </section>
+
+            {/* Lottie Animation */}
+            <section id="lottie" className="scroll-mt-20">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Lottie Animation</CardTitle>
+                  <CardDescription>Responsive Lottie animations that load from URLs.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid gap-4">
+                    <div className="space-y-2">
+                      <Label>Loop Animation</Label>
+                      <div className="h-48 border rounded-md">
+                        <ResponsiveLottie 
+                          url="https://lottie.host/e3605c95-7433-4df1-9395-8e37f9c465a4/j4HvoJWJGf.json" 
+                          playbackMode="loop"
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Play Once Animation</Label>
+                      <div className="h-48 border rounded-md">
+                        <ResponsiveLottie 
+                          url="https://lottie.host/94fa8cc8-a30c-4948-ac34-96a16e9733d0/S8lM2HGqG4.json" 
+                          playbackMode="once"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </section>
+
+            {/* Video Player */}
+            <section id="video-player" className="scroll-mt-20">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Video Player</CardTitle>
+                  <CardDescription>Responsive video player that supports various sources including YouTube, Vimeo, and direct URLs.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid gap-4">
+                    <div className="space-y-2">
+                      <Label>YouTube Video (Loop)</Label>
+                      <div className="h-64 border rounded-md bg-black">
+                        <ResponsivePlayer 
+                          url="https://www.youtube.com/watch?v=dQw4w9WgXcQ" 
+                          playbackMode="loop"
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Direct Video URL with Controls</Label>
+                      <div className="h-64 border rounded-md bg-black">
+                        <ResponsivePlayer 
+                          url="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" 
+                          playbackMode="once"
+                          controls
+                          muted={false}
+                          playing={false}
+                        />
+                      </div>
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
             </section>

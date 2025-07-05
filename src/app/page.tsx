@@ -1,13 +1,20 @@
 'use client'
 
+import { useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/contexts/auth-context"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 
 export default function Home() {
-  const { signInWithGoogle } = useAuth()
+  const { user, loading, signInWithGoogle } = useAuth()
   const router = useRouter()
+
+  useEffect(() => {
+    if (!loading && user) {
+      router.push("/home")
+    }
+  }, [user, loading, router])
 
   const handleGoogleSignIn = async () => {
     try {
@@ -17,6 +24,14 @@ export default function Home() {
     } catch (error: any) {
       toast.error(error.message || "Failed to sign in")
     }
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">Loading...</div>
+      </div>
+    )
   }
 
   return (

@@ -1339,6 +1339,7 @@ export default function ComponentsPage() {
                     <ResponsivePlayer 
                       url="https://www.youtube.com/watch?v=dQw4w9WgXcQ" 
                       controls={true}
+                      playing={false}
                       className="h-64"
                     />
                   </div>

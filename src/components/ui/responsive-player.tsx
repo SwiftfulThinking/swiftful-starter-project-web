@@ -23,7 +23,7 @@ export function ResponsivePlayer({
   controls = false,
   volume = 1,
   muted = true,
-  playing = true
+  playing = false
 }: ResponsivePlayerProps) {
   const [isClient, setIsClient] = useState(false)
   const [hasError, setHasError] = useState(false)

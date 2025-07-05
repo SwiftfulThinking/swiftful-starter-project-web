@@ -20,7 +20,9 @@ export function ResponsiveLottie({ url, playbackMode = 'loop', className }: Resp
         const response = await fetch(url)
         
         if (!response.ok) {
-          throw new Error(`Failed to load animation: ${response.statusText}`)
+          console.error(`Failed to load animation: ${response.status} ${response.statusText}`)
+          setError(`Failed to load animation: ${response.statusText}`)
+          return
         }
         
         const text = await response.text()

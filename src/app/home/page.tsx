@@ -29,13 +29,6 @@ export default function HomePage() {
   const { user, loading, signOut } = useAuth()
   const router = useRouter()
 
-  useEffect(() => {
-    // Redirect to landing page if not authenticated
-    if (!loading && !user) {
-      router.push('/')
-    }
-  }, [user, loading, router])
-
   const handleSignOut = async () => {
     try {
       await signOut()

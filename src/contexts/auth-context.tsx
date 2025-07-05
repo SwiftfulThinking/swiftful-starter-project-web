@@ -17,11 +17,20 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null)
   const [loading, setLoading] = useState(true)
+  const [hasInitialized, setHasInitialized] = useState(false)
 
   useEffect(() => {
     const unsubscribe = authManager.onAuthStateChange((user) => {
       setUser(user)
-      setLoading(false)
+      // Only set loading to false after the first auth state change
+      // This prevents the race condition where Firebase fires with null before loading persisted session
+      if (!hasInitialized) {
+        setHasInitialized(true)
+        // Add a small delay to ensure Firebase has fully initialized
+        setTimeout(() => setLoading(false), 50)
+      } else {
+        setLoading(false)
+      }
     })
 
     return unsubscribe

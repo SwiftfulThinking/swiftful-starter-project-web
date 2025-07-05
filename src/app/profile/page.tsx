@@ -35,13 +35,6 @@ export default function ProfilePage() {
   const [loadingDoc, setLoadingDoc] = useState(true)
 
   useEffect(() => {
-    // Redirect to landing page if not authenticated
-    if (!loading && !user) {
-      router.push('/')
-    }
-  }, [user, loading, router])
-
-  useEffect(() => {
     // Fetch user document from Firestore
     const fetchUserDocument = async () => {
       if (!user) return

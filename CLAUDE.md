@@ -425,7 +425,7 @@ const handleDocumentUpload = async (files: FileList) => {
   ```
 - **Loading States**: Use "Loading..." text or `<Loader2 className="animate-spin" />`
 - **Form Submission**: Support Cmd+Enter keyboard shortcut
-- **Protected Routes**: Check auth in useEffect and redirect to `/` if not authenticated
+- **Protected Routes**: Global auth protection via AuthGuard in root layout
 
 ### Styling Guidelines
 - **Tailwind Only**: No CSS modules or styled-components
@@ -434,16 +434,17 @@ const handleDocumentUpload = async (files: FileList) => {
 - **Spacing**: Follow Tailwind's default spacing scale
 
 ### Authentication Flow
-- **Page Protection Pattern**:
-  ```typescript
-  useEffect(() => {
-    if (!loading && !user) {
-      router.push('/')
-    }
-  }, [user, loading, router])
-  ```
+- **Global Protection**: All pages (except allowed paths) are protected by `AuthGuard` component in root layout
+- **Allowed Paths**: Only `/` (landing) and `/components` are accessible without authentication
+- **AuthGuard Component**: Located at `/src/components/auth-guard.tsx`
+  - Wraps entire app in root layout
+  - Shows loading spinner during auth check
+  - Redirects to landing page if not authenticated
+  - Configurable via `allowedPaths` prop
+- **useAuthGuard Hook**: Available at `/src/hooks/use-auth-guard.tsx` for custom auth logic
 - **Sign Out**: Always redirect to landing page after sign out
 - **User Profiles**: Automatically created in Firestore on first sign-in
+- **Adding New Pages**: No auth code needed - protection is automatic!
 
 ### Sidebar Navigation
 - **Structure**: Every authenticated page must include the sidebar

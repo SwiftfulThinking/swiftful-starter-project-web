@@ -40,13 +40,6 @@ export default function OpenAIPage() {
   const [error, setError] = useState("")
   const [selectedModel, setSelectedModel] = useState("gpt-3.5-turbo")
 
-  useEffect(() => {
-    // Redirect to landing page if not authenticated
-    if (!loading && !user) {
-      router.push('/')
-    }
-  }, [user, loading, router])
-
   const handleSignOut = async () => {
     try {
       await signOut()

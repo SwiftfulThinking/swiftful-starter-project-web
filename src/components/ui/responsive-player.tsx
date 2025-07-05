@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import dynamic from 'next/dynamic'
 import { cn } from '@/lib/utils'
 
@@ -24,6 +25,23 @@ export function ResponsivePlayer({
   muted = true,
   playing = true
 }: ResponsivePlayerProps) {
+  const [isClient, setIsClient] = useState(false)
+  const [isReady, setIsReady] = useState(false)
+
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
+
+  if (!isClient) {
+    return (
+      <div className={cn("w-full h-full relative overflow-hidden rounded-md bg-muted", className)}>
+        <div className="absolute inset-0 flex items-center justify-center">
+          <span className="text-sm text-muted-foreground">Loading player...</span>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className={cn("w-full h-full relative overflow-hidden rounded-md", className)}>
       <ReactPlayer
@@ -33,10 +51,20 @@ export function ResponsivePlayer({
         style={{ position: 'absolute', top: 0, left: 0 }}
         muted={muted}
         volume={volume}
-        playing={playing}
+        playing={playing && isReady}
         playsinline
         loop={playbackMode === 'loop'}
         controls={controls}
+        onReady={() => setIsReady(true)}
+        onError={(error) => console.error('Player error:', error)}
+        config={{
+          youtube: {
+            playerVars: {
+              modestbranding: 1,
+              rel: 0
+            }
+          }
+        }}
       />
     </div>
   )

@@ -17,7 +17,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body className={inter.className}>
         <AuthProvider>
-          <AuthGuard allowedPaths={['/', '/components']} allow404={true}>
+          <AuthGuard allowedPaths={['/']} allow404={true}>
             {children}
           </AuthGuard>
         </AuthProvider>

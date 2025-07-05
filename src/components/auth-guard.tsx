@@ -20,6 +20,9 @@ export function AuthGuard({ children, redirectTo = '/', allowedPaths = ['/'], al
   // Known routes that require authentication
   const protectedRoutes = ['/home', '/profile', '/openai']
   
+  // Check if path starts with any protected route (handles nested routes)
+  const isProtectedPath = protectedRoutes.some(route => pathname.startsWith(route))
+  
   useEffect(() => {
     // Don't do anything while loading
     if (loading) return
@@ -32,13 +35,13 @@ export function AuthGuard({ children, redirectTo = '/', allowedPaths = ['/'], al
 
     // If allow404 is true and the path is not a known protected route, 
     // assume it's a 404 and don't redirect
-    if (allow404 && !protectedRoutes.includes(pathname)) {
+    if (allow404 && !isProtectedPath) {
       return
     }
 
     // Not authenticated and on a protected path, redirect
     router.push(redirectTo)
-  }, [user, loading, router, redirectTo, allowedPaths, pathname, allow404])
+  }, [user, loading, router, redirectTo, allowedPaths, pathname, allow404, isProtectedPath])
 
   // Show loading state while checking auth
   if (loading) {

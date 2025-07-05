@@ -20,8 +20,7 @@ export function ResponsiveLottie({ url, playbackMode = 'loop', className }: Resp
         const response = await fetch(url)
         
         if (!response.ok) {
-          console.error(`Failed to load animation: ${response.status} ${response.statusText}`)
-          setError(`Failed to load animation: ${response.statusText}`)
+          setError(`Unable to load animation`)
           return
         }
         
@@ -29,8 +28,7 @@ export function ResponsiveLottie({ url, playbackMode = 'loop', className }: Resp
         const json = JSON.parse(text)
         setAnimationData(json)
       } catch (err) {
-        console.error('Failed to load Lottie animation:', err)
-        setError(err instanceof Error ? err.message : 'Failed to load animation')
+        setError('Unable to load animation')
       }
     }
 
@@ -42,7 +40,7 @@ export function ResponsiveLottie({ url, playbackMode = 'loop', className }: Resp
   if (error) {
     return (
       <div className={`w-full h-full flex items-center justify-center text-muted-foreground ${className}`}>
-        <span className="text-sm">Failed to load animation</span>
+        <span className="text-sm">Unable to load animation</span>
       </div>
     )
   }

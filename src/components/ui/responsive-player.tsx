@@ -26,17 +26,32 @@ export function ResponsivePlayer({
   playing = true
 }: ResponsivePlayerProps) {
   const [isClient, setIsClient] = useState(false)
-  const [isReady, setIsReady] = useState(false)
+  const [hasError, setHasError] = useState(false)
 
   useEffect(() => {
     setIsClient(true)
   }, [])
+
+  const handleError = (error: any) => {
+    console.error('Player error:', error)
+    setHasError(true)
+  }
 
   if (!isClient) {
     return (
       <div className={cn("w-full h-full relative overflow-hidden rounded-md bg-muted", className)}>
         <div className="absolute inset-0 flex items-center justify-center">
           <span className="text-sm text-muted-foreground">Loading player...</span>
+        </div>
+      </div>
+    )
+  }
+
+  if (hasError || !url) {
+    return (
+      <div className={cn("w-full h-full relative overflow-hidden rounded-md bg-muted", className)}>
+        <div className="absolute inset-0 flex items-center justify-center">
+          <span className="text-sm text-muted-foreground">Unable to load media</span>
         </div>
       </div>
     )
@@ -51,12 +66,11 @@ export function ResponsivePlayer({
         style={{ position: 'absolute', top: 0, left: 0 }}
         muted={muted}
         volume={volume}
-        playing={playing && isReady}
+        playing={playing}
         playsinline
         loop={playbackMode === 'loop'}
         controls={controls}
-        onReady={() => setIsReady(true)}
-        onError={(error) => console.error('Player error:', error)}
+        onError={handleError}
         config={{
           youtube: {
             playerVars: {

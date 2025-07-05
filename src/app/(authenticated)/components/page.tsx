@@ -179,16 +179,18 @@ export default function ComponentsPage() {
 
   return (
     <TooltipProvider>
-      {/* Header */}
-      <div className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="flex h-14 items-center justify-between px-8">
-          <h1 className="text-2xl font-bold">shadcn/ui Components</h1>
+      <div className="space-y-8">
+        {/* Page Header */}
+        <div className="flex items-start justify-between">
+          <div>
+            <h1 className="text-2xl font-bold">Components</h1>
+            <p className="text-muted-foreground mt-2">All shadcn/ui components in one place</p>
+          </div>
           <ThemeSwitcher />
         </div>
-      </div>
 
-      {/* Main Content with Secondary Sidebar */}
-      <div className="flex gap-8 p-8">
+        {/* Main Content with Secondary Sidebar */}
+        <div className="flex gap-8">
         {/* Table of Contents Sidebar */}
         <aside className="hidden lg:block w-64 shrink-0">
           <div className="sticky top-20">
@@ -1356,6 +1358,7 @@ export default function ComponentsPage() {
             </Card>
           </section>
         </main>
+      </div>
       </div>
     </TooltipProvider>
   )

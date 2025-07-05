@@ -22,9 +22,10 @@ export default function HomePage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
+    <div className="space-y-8">
       <div>
-        <h1 className="text-4xl font-bold">Welcome to Your Dashboard</h1>
+        <h1 className="text-2xl font-bold">Home</h1>
+        <p className="text-muted-foreground mt-2">Welcome to your dashboard</p>
       </div>
 
       <Card>
